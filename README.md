@@ -1,2 +1,2 @@
 # react-exercises
-Some exercises to learn React
+Testing git from new pc
