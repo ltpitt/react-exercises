@@ -1,2 +1,3 @@
-# react-exercises
-Testing git from new pc
+# Workspace Exercises for React Fundamentals
+
+This repo contains the code for the in-class Workspace exercises
