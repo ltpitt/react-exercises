@@ -143,13 +143,6 @@
         return next(action);
       };
 
-      const thunk = (store) => (next) => (action) => {
-        if (typeof action === "function") {
-          return action(store.dispatch);
-        }
-        next(action);
-      };
-
       const logger = (store) => (next) => (action) => {
         console.group(action.type);
         console.log("The action: ", action);
@@ -165,7 +158,7 @@
           goals,
           loading,
         }),
-        Redux.applyMiddleware(thunk, checker, logger)
+        Redux.applyMiddleware(ReduxThunk.default, checker, logger)
       );
     </script>
 
