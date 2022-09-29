@@ -10,6 +10,7 @@
     <!-- if import above is down try this: 
     <script src="https://ui.dev/goals-todos-api/index.js"></script>
     -->
+    <script src="https://unpkg.com/redux-thunk@2.2.0/dist/redux-thunk.min.js"></script>
   </head>
   <body>
     <div id="app"></div>
@@ -73,6 +74,16 @@
         };
       }
 
+      function handleDeleteTodo(todo) {
+        return (dispatch) => {
+          dispatch(removeTodoAction(todo.id));
+          return API.deleteTodo(todo.id).catch(() => {
+            dispatch(addTodoAction(todo));
+            alert("An error occurred. Try again.");
+          });
+        };
+      }
+
       function todos(state = [], action) {
         switch (action.type) {
           case ADD_TODO:
@@ -132,6 +143,13 @@
         return next(action);
       };
 
+      const thunk = (store) => (next) => (action) => {
+        if (typeof action === "function") {
+          return action(store.dispatch);
+        }
+        next(action);
+      };
+
       const logger = (store) => (next) => (action) => {
         console.group(action.type);
         console.log("The action: ", action);
@@ -147,7 +165,7 @@
           goals,
           loading,
         }),
-        Redux.applyMiddleware(checker, logger)
+        Redux.applyMiddleware(thunk, checker, logger)
       );
     </script>
 
@@ -200,11 +218,7 @@
         };
 
         const removeItem = (todo) => {
-          props.store.dispatch(removeTodoAction(todo.id));
-          return API.deleteTodo(todo.id).catch(() => {
-            props.store.dispatch(addTodoAction(todo));
-            alert("An error occurred. Try again.");
-          });
+          props.store.dispatch(handleDeleteTodo(todo));
         };
 
         return (
