@@ -132,6 +132,18 @@
         };
       }
 
+      function handleInitialData() {
+        return (dispatch) => {
+          Promise.all([API.fetchTodos(), API.fetchGoals()]).then(
+            ([todos, goals]) => {
+              dispatch(receiveDataAction(todos, goals));
+              console.log("Todos", todos);
+              console.log("Goals", goals);
+            }
+          );
+        };
+      }
+
       function todos(state = [], action) {
         switch (action.type) {
           case ADD_TODO:
@@ -291,19 +303,11 @@
       };
 
       const App = (props) => {
-        React.useEffect(() => {
-          Promise.all([API.fetchTodos(), API.fetchGoals()]).then(
-            ([todos, goals]) => {
-              props.store.dispatch(receiveDataAction(todos, goals));
-              console.log("Todos", todos);
-              console.log("Goals", goals);
-            }
-          );
-        }, []);
-
         const [value, setValue] = React.useState(0);
 
         React.useEffect(() => {
+          props.store.dispatch(handleInitialData());
+
           props.store.subscribe(() => {
             setValue((value) => value + 1);
           });
