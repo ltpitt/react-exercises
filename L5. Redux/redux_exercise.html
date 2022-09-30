@@ -84,31 +84,53 @@
         };
       }
 
-      function handleAddGoal (name, callBackFunction) {
+      function handleAddGoal(name, callBackFunction) {
         return (dispatch) => {
-            return API.saveGoal(name).then((goal) => {
-                dispatch(addGoalAction(goal));
-                callBackFunction();
-            }).catch(() => {
-                alert("An error occurred. Try again.");
+          return API.saveGoal(name)
+            .then((goal) => {
+              dispatch(addGoalAction(goal));
+              callBackFunction();
             })
-
-        }
+            .catch(() => {
+              alert("An error occurred. Try again.");
+            });
+        };
       }
 
-
-      function handleDeleteGoal (goal) {
+      function handleToggle(id) {
         return (dispatch) => {
-            dispatch(removeGoalAction(goal.id))
+          dispatch(toggleTodoAction(id));
 
-            return API.deleteGoal(goal.id).catch(() => {
-                dispatch(addGoalAction(goal));
-                alert("An error occurred. Try again.");
-            })
-        }
+          return API.saveTodoToggle(id).catch(() => {
+            dispatch(toggleTodoAction(id));
+            alert("An error occurred. Try again.");
+          });
+        };
       }
 
+      function handleDeleteGoal(goal) {
+        return (dispatch) => {
+          dispatch(removeGoalAction(goal.id));
 
+          return API.deleteGoal(goal.id).catch(() => {
+            dispatch(addGoalAction(goal));
+            alert("An error occurred. Try again.");
+          });
+        };
+      }
+
+      function handleAddTodo(name, callBackFunction) {
+        return (dispatch) => {
+          API.saveTodo(name)
+            .then((todo) => {
+              dispatch(addTodoAction(todo));
+              callBackFunction();
+            })
+            .catch(() => {
+              alert("An error occurred. Try again.");
+            });
+        };
+      }
 
       function todos(state = [], action) {
         switch (action.type) {
@@ -217,23 +239,14 @@
 
         const addItem = (e) => {
           e.preventDefault();
-
-          return API.saveTodo(inputRef.current.value)
-            .then((todo) => {
-              props.store.dispatch(addTodoAction(todo));
-              inputRef.current.value = "";
-            })
-            .catch(() => {
-              alert("There was an error. Try again.");
-            });
+          const name = inputRef.current.value;
+          props.store.dispatch(
+            handleAddTodo(name, () => (inputRef.current.value = ""))
+          );
         };
 
         const toggleItem = (id) => {
-          props.store.dispatch(toggleTodoAction(id));
-          return API.saveTodoToggle(id).catch(() => {
-            props.store.dispatch(toggleTodoAction(id));
-            alert("An error occurred. Try again.");
-          });
+          props.store.dispatch(handleToggle(id));
         };
 
         const removeItem = (todo) => {
@@ -256,8 +269,11 @@
         const addItem = (e) => {
           e.preventDefault();
           const name = inputRef.current.value;
-          props.store.dispatch(handleAddGoal(name, () => {return inputRef.current.value = ""}))
-
+          props.store.dispatch(
+            handleAddGoal(name, () => {
+              return (inputRef.current.value = "");
+            })
+          );
         };
 
         const removeItem = (goal) => {
