@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom/client";
+import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./components/App";
 import reducer from "./reducers";
@@ -9,7 +9,7 @@ import { createStore } from "redux";
 
 const store = createStore(reducer, middleware);
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
+const root = ReactDOM.render(document.getElementById("root"));
 root.render(
   <Provider store={store}>
     <App />
