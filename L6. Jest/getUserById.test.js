@@ -22,7 +22,7 @@ describe("getUserById", () => {
   it("will return an error if the id is not found", async () => {
     const invalidUserId = -4;
     await expect(getUserById(invalidUserId)).rejects.toEqual(
-      "User with ID -4 not found."
+      "User with ID " + invalidUserId + " not found."
     );
   });
 });
